@@ -81,8 +81,15 @@ def menu():
         selection = easygui.choicebox(msg , title , choices)
     
         get_input = options[selection]()
-    
-def pick(type):
+def user_pick_task():
+    Choice_list = []
+    for key , task_info in task.items():
+        Choice_list.append(task_info["title"])
+    choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
+    for key, task_info in task.items():
+        if task_info['title'] == choice:
+            return key   
+def pick():
     if type == "task":
         Choice_list = []
         for key , task_info in task.items():
@@ -96,11 +103,32 @@ def pick(type):
         for key  in task.items():
             Choice_list.append(task_info)
         print(Choice_list)
+    elif type == "task_item":
+        Choice_list = []
+        for key , task_info in task.items():
+            for property, property_value in task_info.items():
+                Choice_list.append(property)
+        print(Choice_list)
     elif type == "user":
         print("how tf did u get here")
     
     else:
         return menu()
+def user_pick_task_item(index):
+    Choice_list = []
+    for key , task_info in task.items():
+        if key == index:
+            for property, property_value in task_info.items():
+                Choice_list.append(property)
+    print(Choice_list)
+
+    choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
+    return choice
+def num_edit():
+        print()
+def text_edit():
+    print()
+
     
 
 
@@ -108,11 +136,38 @@ def pick(type):
 def edit_task():
     """
     """
-    TYPE = "task"
+    
     print("susceful entered task edit.")
-    user_request_type = pick(TYPE)
-    user_request_
-    for key ,task_info in task.items():
-        if user_request == key
+    user_request_task = user_pick_task()
+    user_request_task_item = user_pick_task_item(user_request_task)
+    print(user_request_task_item)
+    if not user_request_task_item == "Status" or not\
+          user_request_task_item == "Priority" :
+        value = task[user_request_task][user_request_task_item]
+        print(f"entered {user_request_task_item} eddit")
+        print(value)
+        new_value = easygui.enterbox(f"enter new: {user_request_task_item}", \
+                                     "",value,)
+        print(new_value)
+        task[user_request_task][user_request_task_item] = new_value
+        if value == new_value:
+            easygui.msgbox("warning nothing changed","Warning!")
+            return menu()
+        else:
+            easygui.msgbox(f"the value was updated from:\n {value}\n \
+            to: {new_value} ","warning you eddited task")
+            return menu()
+    elif user_request_task_item == "Status" or \
+          user_request_task_item == "Priority" :
+        value = task[user_request_task][user_request_task_item]
+        print(f"entered {user_request_task_item} eddit")
+        print(value)
+        
+        new_value = easygui.integerbox(f"enter new: {user_request_task_item}", \
+                                     "",value,)
+
+    else:
+        return menu()
+    
 
 menu()
