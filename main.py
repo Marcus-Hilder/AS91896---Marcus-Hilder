@@ -49,7 +49,7 @@ team = {
         "Email" : "Jane@techvision.com",
         "task"  : ["T4"]
     },
-    "JSM" : {
+    "BDI" : {
         "name"  : "Bob Dillon",
         "Email" : "Bob@techvision.com",
         "task"  : ["T5"]
@@ -61,7 +61,7 @@ def menu():
     displays main menu and return user choice
     """
     options = {
-        #"add_task"    : add_task,
+        "add_task"    : new_task,
         #"remove task" : reomve_task,
         "edit task"   : edit_task,
         #"search_user" : user_search,
@@ -89,6 +89,7 @@ def user_pick_task():
     for key, task_info in task.items():
         if task_info['title'] == choice:
             return key   
+"""
 def pick():
     if type == "task":
         Choice_list = []
@@ -114,6 +115,7 @@ def pick():
     
     else:
         return menu()
+"""
 def user_pick_task_item(index):
     Choice_list = []
     for key , task_info in task.items():
@@ -141,15 +143,18 @@ def edit_task():
     user_request_task = user_pick_task()
     user_request_task_item = user_pick_task_item(user_request_task)
     print(user_request_task_item)
-    if not user_request_task_item == "Status" or not\
-          user_request_task_item == "Priority" :
+    if not user_request_task_item == "Priority" :
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
         new_value = easygui.enterbox(f"enter new: {user_request_task_item}", \
                                      "",value,)
         print(new_value)
-        task[user_request_task][user_request_task_item] = new_value
+        if new_value == None:
+            easygui.msgbox("warning nothing changed","Warning!")
+            return menu()
+        else:
+            task[user_request_task][user_request_task_item] = new_value
         if value == new_value:
             easygui.msgbox("warning nothing changed","Warning!")
             return menu()
@@ -157,17 +162,53 @@ def edit_task():
             easygui.msgbox(f"the value was updated from:\n {value}\n \
             to: {new_value} ","warning you eddited task")
             return menu()
-    elif user_request_task_item == "Status" or \
-          user_request_task_item == "Priority" :
+    #for edditng integers
+    elif user_request_task_item == "Status" :
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
-        
-        new_value = easygui.integerbox(f"enter new: {user_request_task_item}", \
-                                     "",value,)
+        if user_request_task_item == "Status":
+            upper = 3
+            lower = 1
+        else:
+            upper = 1
+            lower = 5
 
+        new_value = easygui.integerbox(f"enter new: {user_request_task_item}",\
+                                     "",value,lower,upper)
+        if new_value == None:
+            easygui.msgbox("warning nothing changed","Warning!")
+            return menu()
+        else:
+            task[user_request_task][user_request_task_item] = new_value
+        if value == new_value:
+            easygui.msgbox("warning nothing changed","Warning!")
+            return menu()
+        else:
+            easygui.msgbox(f"the value was updated from:\n {value}\n \
+            to: {new_value} ","warning you eddited task")
+            return menu()
     else:
         return menu()
-    
+
+def new_task():
+    print("susceful entered new task.")
+    TITLE = "create new task"
+    team_names = [""]
+    task_num = 0
+    Status = ["Not Started","In Progress","Blocked"]
+    for key, details in team.items():
+        team_names.append(key)
+    print(team_names)
+    for key in task.items():
+        task_num =+ 1
+
+
+    n_task_name = easygui.enterbox("enter new task name", TITLE,)
+    n_task_description = easygui.enterbox("enter new task description", TITLE,)
+    n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE,\
+    team_names)
+    n_task_Priority = easygui.integerbox("enter new task name", TITLE,"",1,3)
+    n_task_
 
 menu()
