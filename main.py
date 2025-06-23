@@ -66,6 +66,7 @@ def menu():
         "edit task"   : edit_task,
         #"search_user" : user_search,
         #"print all user's"   : show_all,
+        #"print task" : view_task,
         "exit"        : exit
     }
     get_input = "Y"
@@ -194,21 +195,44 @@ def edit_task():
 def new_task():
     print("susceful entered new task.")
     TITLE = "create new task"
-    team_names = [""]
+    team_names = []
     task_num = 0
     Status = ["Not Started","In Progress","Blocked"]
+
     for key, details in team.items():
         team_names.append(key)
     print(team_names)
-    for key in task.items():
-        task_num =+ 1
-
-
+    task_id = f"T{str(len(task)+1)}"
     n_task_name = easygui.enterbox("enter new task name", TITLE,)
     n_task_description = easygui.enterbox("enter new task description", TITLE,)
     n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE,\
     team_names)
-    n_task_Priority = easygui.integerbox("enter new task name", TITLE,"",1,3)
-    n_task_
+    n_task_priority = easygui.integerbox("enter task priority",TITLE,2,1,3)
+    n_task_status = easygui.choicebox("enter new task status ",TITLE,Status)
+    
+    n_task = {
+        "title" : n_task_name,
+        "description" : n_task_description,
+        "Assignee" : n_task_Assignee,
+        "Priority" : n_task_priority,
+        "Status"   : n_task_status
+    }
+    task[task_id] = n_task
+    view_task(task_id)
+    return menu()
+def pick_and_view():
+    user_request_task = user_pick_task()
+    for key, des in 
+
+def view_task(num):
+    print("you entred view task")
+    print(num)
+    gui_output = ""
+    for names , data in task[num].items():
+        data = f"{names}  :  {data}\n"
+        gui_output += data
+    easygui.msgbox(gui_output,num)
+    return
+
 
 menu()
