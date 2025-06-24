@@ -64,9 +64,9 @@ def menu():
         "add_task"    : new_task,
         #"remove task" : reomve_task,
         "edit task"   : edit_task,
-        #"search_user" : user_search,
-        #"print all user's"   : show_all,
-        #"print task" : view_task,
+        "search_user" : user_search,
+        #"user tasks"   : show_all,
+        "pick task"   : pick_and_view,
         "exit"        : exit
     }
     get_input = "Y"
@@ -83,6 +83,7 @@ def menu():
     
         get_input = options[selection]()
 def user_pick_task():
+    """ allows user to pick a task from the list of tasks"""
     Choice_list = []
     for key , task_info in task.items():
         Choice_list.append(task_info["title"])
@@ -118,6 +119,8 @@ def pick():
         return menu()
 """
 def user_pick_task_item(index):
+    """
+    allows user to pick a task item"""
     Choice_list = []
     for key , task_info in task.items():
         if key == index:
@@ -127,19 +130,14 @@ def user_pick_task_item(index):
 
     choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
     return choice
-def num_edit():
-        print()
-def text_edit():
-    print()
-
-    
-
-
 
 def edit_task():
     """
-    """
-    
+    allows user to edit task"""
+    user_request_task = user_pick_task()
+    user_request_task_item = user_pick_task_item(user_request_task)
+    print(user_request_task_item)
+
     print("susceful entered task edit.")
     user_request_task = user_pick_task()
     user_request_task_item = user_pick_task_item(user_request_task)
@@ -222,7 +220,10 @@ def new_task():
     return menu()
 def pick_and_view():
     user_request_task = user_pick_task()
-    for key, des in 
+    for key, des in task.items():
+        if key == user_request_task:
+            view_task(key)
+            return menu()
 
 def view_task(num):
     print("you entred view task")
@@ -233,6 +234,36 @@ def view_task(num):
         gui_output += data
     easygui.msgbox(gui_output,num)
     return
+def user_search():
+    print("you entred user search")
+    user_key = {}
+    list_of_users = []
+
+    for key, details in team.items():
+        user_key[key] = details["name"]
+    for key, details in user_key.items():
+        list_of_users.append(details)
+
+    print(user_key)
+
+    user = easygui.choicebox("pick a user", "user picker", list_of_users)
+    list_of_tasks = []
+    for key, details in user_key.items():
+        if details == user:
+            wanted_id = key
+    for key , details in task.items():
+        if details["Assignee"] == wanted_id:
+            
+            print(list_of_tasks)
+            list_of_tasks.append(details["title"])
+    print(list_of_tasks)
+    input = easygui.choicebox("pick a task", "task picker", list_of_tasks)
+    for key, details in task.items():
+        if details["title"] == input:
+            print(f"you picked {input}")
+            print(key)
+    view_task(key)
+    return(menu)
 
 
 menu()
