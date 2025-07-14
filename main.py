@@ -66,7 +66,9 @@ def menu():
         "edit task"   : edit_task,
         #"search_user" : user_search,
         #"print all user's"   : show_all,
-        "view task" : pick_and_view,
+        "view induvigal task" : pick_and_view,
+        "view all task"       : view_all,
+        "view user task"      : view_user_tasks,
         "exit"        : exit
     }
     get_input = "Y"
@@ -97,17 +99,29 @@ def user_pick_task_item(index):
     """ allows the user to pick a item in a task then it
     will return the item in the task for the prevous function to handel
     """
-
+    #create a blank list the wright to 
     Choice_list = []
+    #scroll throught the list of avible items in the task
     for key , task_info in task.items():
+        #check task is = to the task spesified in the prevous function
         if key == index:
-            for property, property_value in task_info.items():
-                Choice_list.append(property)
+            #pull all items from the chosent task and append to list
+            for k, des in task_info.items():
+                Choice_list.append(k)
     print(Choice_list)
-
+    #present all aviable optins to user then return their choice
     choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
     return choice
-
+def user_pick_user():
+    """ allows the user to pick a task then it will return the task for
+    the prevous function to handel """
+    Choice_list = []
+    for key , user in team.items():
+        Choice_list.append(user["name"])
+    choice = easygui.choicebox("pick user" ,"user selsction" , choices=Choice_list)
+    for key, user in team.items():
+        if user['name'] == choice:
+            return key
 def edit_task():
     """
     allows user to edit task"""
@@ -166,16 +180,27 @@ def edit_task():
             return menu()
     else:
         return menu()
+def view_user_tasks():
+    """ this function allows user to selesct a staff member then view there
+     task """
+    pretty_format = ""
+    user = user_pick_user()
+    for key , des in team.items():
+        if key == user:
+            for k, description in des.items():
+                pretty_format += f"{k} : {description}\n"
 
 def new_task():
     print("susceful entered new task.")
     TITLE = "create new task"
-    team_names = []
+    team_names = ['None']
     task_num = 0
     Status = ["Not Started","In Progress","Blocked"]
-
+    
     for key, details in team.items():
         team_names.append(key)
+        print(key)
+    
     print(team_names)
     task_id = f"T{str(len(task)+1)}"
     n_task_name = easygui.enterbox("enter new task name", TITLE,)
@@ -184,7 +209,10 @@ def new_task():
     team_names)
     n_task_priority = easygui.integerbox("enter task priority",TITLE,2,1,3)
     n_task_status = easygui.choicebox("enter new task status ",TITLE,Status)
-    
+    if  n_task_Assignee  != "None" or n_task_status != "completed":
+        for key , des in team.items:
+            if key == n_task_Assignee:
+                team[key]["task"].append(task_id)
     n_task = {
         "title" : n_task_name,
         "description" : n_task_description,
@@ -196,6 +224,8 @@ def new_task():
     view_task(task_id)
     return menu()
 def pick_and_view():
+    """this function allows the uerser to pick and view a task from
+    the task list"""
     pretty_format = ""
     user_request_task = user_pick_task()
     print(user_request_task)
@@ -205,12 +235,16 @@ def pick_and_view():
                 pretty_format += f"{k} : {info}\n"
     easygui.msgbox(pretty_format)
     return menu()
-
-                 
-
-        
-
+def view_all():
+    pretty_format = ""
+    for key, des in task.items():
+        for k , info in des.items():
+            pretty_format += f"{k} : {info}\n"
+    easygui.msgbox(pretty_format)
+    return menu()
 def view_task(num):
+    """this function allows the system to pick and view a task from
+    the task list"""
     print("you entred view task")
     print(num)
     gui_output = ""
