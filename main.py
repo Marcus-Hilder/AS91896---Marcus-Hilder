@@ -66,7 +66,7 @@ def menu():
         "edit task"   : edit_task,
         #"search_user" : user_search,
         #"print all user's"   : show_all,
-        #"print task" : view_task,
+        "view task" : pick_and_view,
         "exit"        : exit
     }
     get_input = "Y"
@@ -83,6 +83,8 @@ def menu():
     
         get_input = options[selection]()
 def user_pick_task():
+    """ allows the user to pick a task then it will return the task for
+    the prevous function to handel """
     Choice_list = []
     for key , task_info in task.items():
         Choice_list.append(task_info["title"])
@@ -90,34 +92,12 @@ def user_pick_task():
     for key, task_info in task.items():
         if task_info['title'] == choice:
             return key   
-"""
-def pick():
-    if type == "task":
-        Choice_list = []
-        for key , task_info in task.items():
-            Choice_list.append(task_info["title"])
-        choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
-        for key, task_info in task.items():
-            if task_info['title'] == choice:
-                return key
-    elif type == "lables":
-        Choice_list = []
-        for key  in task.items():
-            Choice_list.append(task_info)
-        print(Choice_list)
-    elif type == "task_item":
-        Choice_list = []
-        for key , task_info in task.items():
-            for property, property_value in task_info.items():
-                Choice_list.append(property)
-        print(Choice_list)
-    elif type == "user":
-        print("how tf did u get here")
-    
-    else:
-        return menu()
-"""
+
 def user_pick_task_item(index):
+    """ allows the user to pick a item in a task then it
+    will return the item in the task for the prevous function to handel
+    """
+
     Choice_list = []
     for key , task_info in task.items():
         if key == index:
@@ -221,8 +201,19 @@ def new_task():
     view_task(task_id)
     return menu()
 def pick_and_view():
+    pretty_format = ""
     user_request_task = user_pick_task()
-    for key, des in 
+    print(user_request_task)
+    for key, des in task.items():
+        if key == user_request_task:
+            for k , info in des.items():
+                pretty_format += f"{k} : {info}\n"
+    easygui.msgbox(pretty_format)
+    return menu()
+
+                 
+
+        
 
 def view_task(num):
     print("you entred view task")
@@ -232,7 +223,7 @@ def view_task(num):
         data = f"{names}  :  {data}\n"
         gui_output += data
     easygui.msgbox(gui_output,num)
-    return
+    return 
 
 
 menu()
