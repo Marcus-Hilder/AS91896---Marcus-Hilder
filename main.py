@@ -107,19 +107,14 @@ def user_pick_task_item(index):
 
     choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
     return choice
-def num_edit():
-        print()
-def text_edit():
-    print()
-
-    
-
-
 
 def edit_task():
     """
-    """
-    
+    allows user to edit task"""
+    user_request_task = user_pick_task()
+    user_request_task_item = user_pick_task_item(user_request_task)
+    print(user_request_task_item)
+
     print("susceful entered task edit.")
     user_request_task = user_pick_task()
     user_request_task_item = user_pick_task_item(user_request_task)
