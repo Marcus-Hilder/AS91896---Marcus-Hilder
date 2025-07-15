@@ -32,7 +32,7 @@ task = {
     "T5" : {
         "title" : "Create an About Us page",
         "description" : "Create a page with information about the company",
-        "Assignee" : "JLO",
+        "Assignee" : "BDI",
         "Priority" : 1,
         "Status"   : "Blocked"
     }
@@ -64,18 +64,18 @@ def menu():
         "add_task"    : new_task,
         #"remove task" : reomve_task,
         "edit task"   : edit_task,
-        #"search_user" : user_search,
+        #"searc_user" : user_search,
         #"print all user's"   : show_all,
         "system search" : system_search,
-        "view all task"       : view_all,
-        
+        "view all task" : view_all,
+        "report"        : report,
         "exit"        : exit
     }
     get_input = "Y"
 
     while get_input == "Y":
         msg = "what would you like to do"
-        title = "games Database Choices"
+        title = "FIX**"
         choices = []
 
         for items in options:
@@ -169,7 +169,7 @@ def edit_task():
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
-        choices = ["completed", "inprogres", "blocked", "not started"]
+        choices = ["Completed", "In Progress", "Blocked", "Not Started"]
         new_value = easygui.buttonbox(f"select new status for {user_request_task}","update status for {user_request_task}",choices)
         task[user_request_task][user_request_task_item] = new_value
         if new_value == "completed" and user != "":
@@ -231,7 +231,6 @@ def view_user_tasks():
     easygui.msgbox(pretty_format,f"{user}'s tasks")
     return menu()
 
-
 def new_task():
     print("susceful entered new task.")
     TITLE = "create new task"
@@ -252,7 +251,7 @@ def new_task():
     n_task_priority = easygui.integerbox("enter task priority",TITLE,2,1,3)
     n_task_status = easygui.choicebox("enter new task status ",TITLE,Status)
     if  n_task_Assignee  != "None" or n_task_status != "completed":
-        for key , des in team.items:
+        for key , des in team.items():
             if key == n_task_Assignee:
                 team[key]["task"].append(task_id)
     n_task = {
@@ -265,6 +264,7 @@ def new_task():
     task[task_id] = n_task
     view_task(task_id)
     return menu()
+
 def pick_and_view():
     """this function allows the uerser to pick and view a task from
     the task list"""
@@ -291,13 +291,39 @@ def view_task(num):
     """this function allows the system to pick and view a task from
     the task list"""
     print("you entred system task view task")
-    print(num)
+    
     gui_output = ""
     for names , data in task[num].items():
         data = f"{names}  :  {data}\n"
         gui_output += data
     easygui.msgbox(gui_output,num)
     return 
+
+def report():
+    completed = 0
+    in_progress = 0
+    not_started = 0
+    blocked = 0
+    pretty_format = ""
+    for key , des in task.items():
+        for k , info in des.items():
+            if k == "Status":
+                if info == "Completed":
+                    completed += 1
+                elif info == "In Progress":
+                    in_progress += 1
+                elif info == "Blocked":
+                    blocked += 1
+                elif info == "Not Started":
+                    not_started += 1
+                else:
+                    print("fuckkkkk")
+    pretty_format += f"completed : {completed}\n\n"
+    pretty_format += f"In Progress : {in_progress}\n\n"
+    pretty_format += f"Blocked : {blocked}\n\n"
+    pretty_format += f"Not Started : {not_started}"
+    easygui.msgbox(pretty_format,"your curent report", "slay")
+    
 
 
 menu()
