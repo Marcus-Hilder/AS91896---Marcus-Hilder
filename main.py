@@ -66,9 +66,9 @@ def menu():
         "edit task"   : edit_task,
         #"search_user" : user_search,
         #"print all user's"   : show_all,
-        "view induvigal task" : pick_and_view,
+        "system search" : system_search,
         "view all task"       : view_all,
-        "view user task"      : view_user_tasks,
+        
         "exit"        : exit
     }
     get_input = "Y"
@@ -84,6 +84,13 @@ def menu():
         selection = easygui.choicebox(msg , title , choices)
     
         get_input = options[selection]()
+def system_search():
+    user_request = easygui.buttonbox("search by:", "system search",("staff member", "task"))
+    if user_request == "staff member":
+        return view_user_tasks()
+    else:
+        return pick_and_view()
+
 def user_pick_task():
     """ allows the user to pick a task then it will return the task for
     the prevous function to handel """
@@ -108,10 +115,11 @@ def user_pick_task_item(index):
             #pull all items from the chosent task and append to list
             for k, des in task_info.items():
                 Choice_list.append(k)
-    print(Choice_list)
+    
     #present all aviable optins to user then return their choice
     choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
     return choice
+
 def user_pick_user():
     """ allows the user to pick a task then it will return the task for
     the prevous function to handel """
@@ -122,18 +130,22 @@ def user_pick_user():
     for key, user in team.items():
         if user['name'] == choice:
             return key
+
 def edit_task():
     """
     allows user to edit task"""
+    user = ""
     user_request_task = user_pick_task()
     user_request_task_item = user_pick_task_item(user_request_task)
-    print(user_request_task_item)
-
-    print("susceful entered task edit.")
-    user_request_task = user_pick_task()
-    user_request_task_item = user_pick_task_item(user_request_task)
-    print(user_request_task_item)
-    if not user_request_task_item == "Priority" :
+    
+    
+    for name , info in team.items():
+        print(name)
+        print(info["task"])
+        if  user_request_task in info["task"]:
+            print("wtf it works")
+            user = name
+    if user_request_task_item == "title" or user_request_task_item == "description" :
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
@@ -152,25 +164,20 @@ def edit_task():
             easygui.msgbox(f"the value was updated from:\n {value}\n \
             to: {new_value} ","warning you eddited task")
             return menu()
-    #for edditng integers
+    
     elif user_request_task_item == "Status" :
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
-        if user_request_task_item == "Status":
-            upper = 3
-            lower = 1
-        else:
-            upper = 1
-            lower = 5
+        choices = ["completed", "inprogres", "blocked", "not started"]
+        new_value = easygui.buttonbox(f"select new status for {user_request_task}","update status for {user_request_task}",choices)
+        task[user_request_task][user_request_task_item] = new_value
+        if new_value == "completed" and user != "":
+            assignee = task[user_request_task]["Assignee"]
+            if user_request_task in team[assignee]["task"]:\
+                team[assignee]["task"].remove(user_request_task)
+            task[user_request_task]["Assignee"] = ""
 
-        new_value = easygui.integerbox(f"enter new: {user_request_task_item}",\
-                                     "",value,lower,upper)
-        if new_value == None:
-            easygui.msgbox("warning nothing changed","Warning!")
-            return menu()
-        else:
-            task[user_request_task][user_request_task_item] = new_value
         if value == new_value:
             easygui.msgbox("warning nothing changed","Warning!")
             return menu()
@@ -178,17 +185,52 @@ def edit_task():
             easygui.msgbox(f"the value was updated from:\n {value}\n \
             to: {new_value} ","warning you eddited task")
             return menu()
-    else:
+    elif user_request_task_item == "Assignee" :
+        value = task[user_request_task][user_request_task_item]
+        print(f"entered {user_request_task_item} eddit")
+        
+        staff = [""]
+        staff_code = [""]
+
+        for key, des in team.items():
+            staff.append(des["name"])
+            staff_code.append(key)
+        pre_set = staff_code.index(value)
+        new_value = easygui.choicebox("pick New Assignee", "New Assignee", staff, pre_set)
+        index = staff.index(new_value)
+        print(staff_code[index])
+        task[user_request_task][user_request_task_item] = staff_code[index]
+        
+
         return menu()
+    elif user_request_task_item == "Priority" :
+        value = task[user_request_task][user_request_task_item]
+        print(f"entered {user_request_task_item} eddit")
+        choices = [1 ,2 ,3]
+        pre_set = choices.index(value)
+        new_value = easygui.choicebox("enter new prioity", "set new priorty", choices, pre_set)
+        task[user_request_task][user_request_task_item] = new_value
+        return menu()
+    else:
+        print(f"you missed{user_request_task_item}")
+
 def view_user_tasks():
-    """ this function allows user to selesct a staff member then view there
+    """ this function allows user to select a staff member in a seprate function then view there
      task """
     pretty_format = ""
     user = user_pick_user()
     for key , des in team.items():
         if key == user:
-            for k, description in des.items():
-                pretty_format += f"{k} : {description}\n"
+            pretty_format += f"{key}\n"
+            for title , info in des.items():
+                pretty_format += f"{title} : {info}\n"
+            for index, description in task.items():
+                if description["Assignee"] == user:
+                    for k , des in description.items():
+                        pretty_format += f"{k} : {des}\n"
+    easygui.msgbox(pretty_format,f"{user}'s tasks")
+    return menu()
+
 
 def new_task():
     print("susceful entered new task.")
@@ -235,17 +277,20 @@ def pick_and_view():
                 pretty_format += f"{k} : {info}\n"
     easygui.msgbox(pretty_format)
     return menu()
+
 def view_all():
     pretty_format = ""
     for key, des in task.items():
+        pretty_format += f"\n{key}\n"
         for k , info in des.items():
-            pretty_format += f"{k} : {info}\n"
+            pretty_format += f" {k} : {info}\n"
     easygui.msgbox(pretty_format)
     return menu()
+
 def view_task(num):
     """this function allows the system to pick and view a task from
     the task list"""
-    print("you entred view task")
+    print("you entred system task view task")
     print(num)
     gui_output = ""
     for names , data in task[num].items():
