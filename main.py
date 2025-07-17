@@ -322,7 +322,7 @@ def report():
     pretty_format += f"In Progress : {in_progress}\n\n"
     pretty_format += f"Blocked : {blocked}\n\n"
     pretty_format += f"Not Started : {not_started}"
-    easygui.msgbox(pretty_format,"your curent report", "slay")
+    easygui.msgbox(pretty_format,"Your curent report", "okie")
     return menu()
 
 
