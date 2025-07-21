@@ -85,7 +85,8 @@ def menu():
     
         get_input = options[selection]()
 def system_search():
-    user_request = easygui.buttonbox("search by:", "system search",("staff member", "task"))
+    user_request = easygui.buttonbox("search by:", "system search",\
+        ("staff member", "task"))
     if user_request == "staff member":
         return view_user_tasks()
     else:
@@ -97,7 +98,7 @@ def user_pick_task():
     Choice_list = []
     for key , task_info in task.items():
         Choice_list.append(task_info["title"])
-    choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
+    choice = easygui.choicebox("pick a task" ,"task picker" , Choice_list)
     for key, task_info in task.items():
         if task_info['title'] == choice:
             return key   
@@ -117,7 +118,7 @@ def user_pick_task_item(index):
                 Choice_list.append(k)
     
     #present all aviable optins to user then return their choice
-    choice = easygui.choicebox("pick a task" ,"task picker" , choices=Choice_list)
+    choice = easygui.choicebox("pick a task" ,"task picker" , Choice_list)
     return choice
 
 def user_pick_user():
@@ -126,7 +127,7 @@ def user_pick_user():
     Choice_list = []
     for key , user in team.items():
         Choice_list.append(user["name"])
-    choice = easygui.choicebox("pick user" ,"user selsction" , choices=Choice_list)
+    choice = easygui.choicebox("pick user" ,"user selsction" , Choice_list)
     for key, user in team.items():
         if user['name'] == choice:
             return key
@@ -145,7 +146,8 @@ def edit_task():
         if  user_request_task in info["task"]:
             print("wtf it works")
             user = name
-    if user_request_task_item == "title" or user_request_task_item == "description" :
+    if user_request_task_item == "title" or\
+        user_request_task_item == "description" :
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
@@ -166,11 +168,14 @@ def edit_task():
             return menu()
     
     elif user_request_task_item == "Status" :
+
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
+        msg = (f"select new status for {user_request_task}")
+        title = ("update status for {user_request_task}")
         choices = ["Completed", "In Progress", "Blocked", "Not Started"]
-        new_value = easygui.buttonbox(f"select new status for {user_request_task}","update status for {user_request_task}",choices)
+        new_value = easygui.buttonbox(msg,title,choices)
         task[user_request_task][user_request_task_item] = new_value
         if new_value == "completed" and user != "":
             assignee = task[user_request_task]["Assignee"]
@@ -196,9 +201,11 @@ def edit_task():
             staff.append(des["name"])
             staff_code.append(key)
         pre_set = staff_code.index(value)
-        new_value = easygui.choicebox("pick New Assignee", "New Assignee", staff, pre_set)
+        msg = ("Pick New Assignee")
+        title = ("New Assignee")
+        new_value = easygui.choicebox(msg, title, staff, pre_set)
         index = staff.index(new_value)
-        print(staff_code[index])
+        
         task[user_request_task][user_request_task_item] = staff_code[index]
         
 
@@ -208,7 +215,9 @@ def edit_task():
         print(f"entered {user_request_task_item} eddit")
         choices = [1 ,2 ,3]
         pre_set = choices.index(value)
-        new_value = easygui.choicebox("enter new prioity", "set new priorty", choices, pre_set)
+        msg = ("enter new prioity")
+        title = ("set new priorty")
+        new_value = easygui.choicebox(msg, title, choices, pre_set)
         task[user_request_task][user_request_task_item] = new_value
         return menu()
     else:
@@ -234,21 +243,22 @@ def view_user_tasks():
 def new_task():
     print("susceful entered new task.")
     TITLE = "create new task"
-    team_names = ['None']
-    task_num = 0
+    staff_members = ['None']
     Status = ["Not Started","In Progress","Blocked"]
-    
+    priority = [1,2,3]
     for key, details in team.items():
-        team_names.append(key)
+        staff_members.append(key)
         print(key)
     
-    print(team_names)
+    print(staff_members)
     task_id = f"T{str(len(task)+1)}"
+    #takes lenth of task dic and add one for new index
     n_task_name = easygui.enterbox("enter new task name", TITLE,)
     n_task_description = easygui.enterbox("enter new task description", TITLE,)
     n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE,\
-    team_names)
-    n_task_priority = easygui.integerbox("enter task priority",TITLE,2,1,3)
+    staff_members)
+    n_task_priority = easygui.choicebox("enter new task's priority",TITLE,\
+        priority)
     n_task_status = easygui.choicebox("enter new task status ",TITLE,Status)
     if  n_task_Assignee  != "None" or n_task_status != "completed":
         for key , des in team.items():
@@ -280,11 +290,14 @@ def pick_and_view():
 
 def view_all():
     pretty_format = ""
+    #int text
     for key, des in task.items():
+
         pretty_format += f"\n{key}\n"
         for k , info in des.items():
             pretty_format += f" {k} : {info}\n"
-    easygui.msgbox(pretty_format)
+    easygui.msgbox(pretty_format,"disply all ")
+    
     return menu()
 
 def view_task(num):
