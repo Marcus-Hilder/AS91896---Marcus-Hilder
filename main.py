@@ -56,16 +56,14 @@ team = {
     }
 
 }
+
 def menu():
     """
     displays main menu and return user choice
     """
     options = {
         "add_task"    : new_task,
-        #"remove task" : reomve_task,
         "edit task"   : edit_task,
-        #"searc_user" : user_search,
-        #"print all user's"   : show_all,
         "system search" : system_search,
         "view all task" : view_all,
         "report"        : report,
@@ -84,6 +82,7 @@ def menu():
         selection = easygui.choicebox(msg , title , choices)
     
         get_input = options[selection]()
+
 def system_search():
     user_request = easygui.buttonbox("search by:", "system search",\
         ("staff member", "task"))
@@ -134,146 +133,174 @@ def user_pick_user():
 
 def edit_task():
     """
-    allows user to edit task"""
-    user = ""
-    user_request_task = user_pick_task()
-    user_request_task_item = user_pick_task_item(user_request_task)
-    
-    
-    for name , info in team.items():
+    Allows user to edit a task.
+    """
+    user = ""  # Placeholder to track the user assigned to the task
+    user_request_task = user_pick_task()  # User selects which task to edit
+    user_request_task_item = user_pick_task_item(user_request_task)  # User selects which attribute to edit
+
+    # Identify the user currently assigned to the task
+    for name, info in team.items():
         print(name)
         print(info["task"])
-        if  user_request_task in info["task"]:
-            print("wtf it works")
+        if user_request_task in info["task"]:
+            print("wtf it works")  # Debug print
             user = name
+
+    # Editing title or description
     if user_request_task_item == "title" or\
-        user_request_task_item == "description" :
+        user_request_task_item == "description":
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
-        new_value = easygui.enterbox(f"enter new: {user_request_task_item}", \
-                                     "",value,)
-        print(new_value)
+        new_value = easygui.enterbox(f"enter new: {user_request_task_item}", "", value)
+        
+        # If user cancels edit
         if new_value == None:
-            easygui.msgbox("warning nothing changed","Warning!")
+            easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
         else:
             task[user_request_task][user_request_task_item] = new_value
+        
+        # If no change was made
         if value == new_value:
-            easygui.msgbox("warning nothing changed","Warning!")
+            easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
         else:
             easygui.msgbox(f"the value was updated from:\n {value}\n \
-            to: {new_value} ","warning you eddited task")
+            to: {new_value} ", "warning you eddited task")
             return menu()
     
-    elif user_request_task_item == "Status" :
-
+    # Editing status
+    elif user_request_task_item == "Status":
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         print(value)
         msg = (f"select new status for {user_request_task}")
         title = ("update status for {user_request_task}")
         choices = ["Completed", "In Progress", "Blocked", "Not Started"]
-        new_value = easygui.buttonbox(msg,title,choices)
+        new_value = easygui.buttonbox(msg, title, choices)
+
         task[user_request_task][user_request_task_item] = new_value
+
+        # If task is marked completed, remove it from the team member's task list
         if new_value == "completed" and user != "":
             assignee = task[user_request_task]["Assignee"]
-            if user_request_task in team[assignee]["task"]:\
+            if user_request_task in team[assignee]["task"]:
                 team[assignee]["task"].remove(user_request_task)
             task[user_request_task]["Assignee"] = ""
 
         if value == new_value:
-            easygui.msgbox("warning nothing changed","Warning!")
+            easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
         else:
             easygui.msgbox(f"the value was updated from:\n {value}\n \
-            to: {new_value} ","warning you eddited task")
+            to: {new_value} ", "warning you eddited task")
             return menu()
-    elif user_request_task_item == "Assignee" :
+
+    # Editing assignee
+    elif user_request_task_item == "Assignee":
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
         
         staff = [""]
         staff_code = [""]
 
+        # Create name/code mappings for team members
         for key, des in team.items():
             staff.append(des["name"])
             staff_code.append(key)
-        pre_set = staff_code.index(value)
+        
+        pre_set = staff_code.index(value)  # Current assignee position
         msg = ("Pick New Assignee")
         title = ("New Assignee")
-        new_value = easygui.choicebox(msg, title, staff, pre_set)
+        new_value = easygui.choicebox(msg, title, staff, pre_set)  # Select new assignee
         index = staff.index(new_value)
-        
-        task[user_request_task][user_request_task_item] = staff_code[index]
-        
 
+        task[user_request_task][user_request_task_item] = staff_code[index]  # Save new assignee
         return menu()
-    elif user_request_task_item == "Priority" :
+
+    # Editing priority
+    elif user_request_task_item == "Priority":
         value = task[user_request_task][user_request_task_item]
         print(f"entered {user_request_task_item} eddit")
-        choices = [1 ,2 ,3]
+        choices = [1, 2, 3]
         pre_set = choices.index(value)
         msg = ("enter new prioity")
         title = ("set new priorty")
-        new_value = easygui.choicebox(msg, title, choices, pre_set)
+        new_value = easygui.choicebox(msg, title, choices, pre_set)  # Select new priority
         task[user_request_task][user_request_task_item] = new_value
         return menu()
+    
     else:
-        print(f"you missed{user_request_task_item}")
+        print(f"you missed{user_request_task_item}")  # Fallback case
+
 
 def view_user_tasks():
-    """ this function allows user to select a staff member in a seprate function then view there
-     task """
-    pretty_format = ""
-    user = user_pick_user()
-    for key , des in team.items():
+    """ 
+    This function allows user to select a staff member and view their tasks.
+    """
+    pretty_format = ""  # String for display
+    user = user_pick_user()  # Pick which user to view
+
+    for key, des in team.items():
         if key == user:
             pretty_format += f"{key}\n"
-            for title , info in des.items():
+            for title, info in des.items():
                 pretty_format += f"{title} : {info}\n"
+            
+            # Add assigned tasks
             for index, description in task.items():
                 if description["Assignee"] == user:
-                    for k , des in description.items():
+                    for k, des in description.items():
                         pretty_format += f"{k} : {des}\n"
-    easygui.msgbox(pretty_format,f"{user}'s tasks")
+
+    easygui.msgbox(pretty_format, f"{user}'s tasks")  # Show message box
     return menu()
+
 
 def new_task():
     print("susceful entered new task.")
     TITLE = "create new task"
     staff_members = ['None']
-    Status = ["Not Started","In Progress","Blocked"]
-    priority = [1,2,3]
+    Status = ["Not Started", "In Progress", "Blocked"]
+    priority = [1, 2, 3]
+
+    # Populate staff choices
     for key, details in team.items():
         staff_members.append(key)
         print(key)
     
     print(staff_members)
-    task_id = f"T{str(len(task)+1)}"
-    #takes lenth of task dic and add one for new index
-    n_task_name = easygui.enterbox("enter new task name", TITLE,)
-    n_task_description = easygui.enterbox("enter new task description", TITLE,)
-    n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE,\
-    staff_members)
-    n_task_priority = easygui.choicebox("enter new task's priority",TITLE,\
-        priority)
-    n_task_status = easygui.choicebox("enter new task status ",TITLE,Status)
-    if  n_task_Assignee  != "None" or n_task_status != "completed":
-        for key , des in team.items():
+    
+    task_id = f"T{str(len(task)+1)}"  # Generate new unique incremted task ID
+
+    # Gather task details from user
+    n_task_name = easygui.enterbox("enter new task name", TITLE)
+    n_task_description = easygui.enterbox("enter new task description", TITLE)
+    n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE, staff_members)
+    n_task_priority = easygui.integerbox("enter new task's priority\nBetwen 1 and 3", TITLE, None, 1, 3)
+    n_task_status = easygui.choicebox("enter new task status ", TITLE, Status)
+
+    # If task is assigned and not complete, add to team member's task list
+    if n_task_Assignee != "None" or n_task_status != "completed":
+        for key, des in team.items():
             if key == n_task_Assignee:
                 team[key]["task"].append(task_id)
+
+    # Save task to task dictionary
     n_task = {
-        "title" : n_task_name,
-        "description" : n_task_description,
-        "Assignee" : n_task_Assignee,
-        "Priority" : n_task_priority,
-        "Status"   : n_task_status
+        "title": n_task_name,
+        "description": n_task_description,
+        "Assignee": n_task_Assignee,
+        "Priority": n_task_priority,
+        "Status": n_task_status
     }
     task[task_id] = n_task
-    view_task(task_id)
+
+    view_task(task_id)  # Show the newly created task
     return menu()
+
 
 def pick_and_view():
     """this function allows the uerser to pick and view a task from
@@ -313,14 +340,32 @@ def view_task(num):
     return 
 
 def report():
+    """ 
+    This function allows the user to view all task completion rates.
+    It counts the number of tasks in each status category and then 
+    displays the results.
+    """
+    
+    # Initialize counters for each task status
     completed = 0
     in_progress = 0
     not_started = 0
     blocked = 0
+    
+    # Initialize an empty string to build the output message
     pretty_format = ""
-    for key , des in task.items():
-        for k , info in des.items():
+   
+    # Loop through each task in the 'task' dictionary
+    for key, des in task.items():
+        
+        # Each 'des' is a dictionary of task attributes, loop through 
+        # these attributes
+        for k, info in des.items():
+            
+            # Check if the current attribute is the task status
             if k == "Status":
+                # Increment the appropriate counter based on the
+                # status value
                 if info == "Completed":
                     completed += 1
                 elif info == "In Progress":
@@ -330,12 +375,20 @@ def report():
                 elif info == "Not Started":
                     not_started += 1
                 else:
-                    print("fuckkkkk")
-    pretty_format += f"completed : {completed}\n\n"
+                    # If status value is unexpected, print an error 
+                    # message
+                    print("Unexpected status encountered!")
+    
+    # Build the summary string to display the counts of each status
+    pretty_format += f"Completed : {completed}\n\n"
     pretty_format += f"In Progress : {in_progress}\n\n"
     pretty_format += f"Blocked : {blocked}\n\n"
     pretty_format += f"Not Started : {not_started}"
-    easygui.msgbox(pretty_format,"Your curent report", "okie")
+    
+    # Show the summary to the user using easygui message box
+    easygui.msgbox(pretty_format, "Your current report", "okie")
+    
+    # Return to the menu function after showing the report
     return menu()
 
 
