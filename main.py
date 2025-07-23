@@ -141,18 +141,14 @@ def edit_task():
 
     # Identify the user currently assigned to the task
     for name, info in team.items():
-        print(name)
-        print(info["task"])
+
         if user_request_task in info["task"]:
-            print("wtf it works")  # Debug print
             user = name
 
     # Editing title or description
     if user_request_task_item == "title" or\
         user_request_task_item == "description":
         value = task[user_request_task][user_request_task_item]
-        print(f"entered {user_request_task_item} eddit")
-        print(value)
         new_value = easygui.enterbox(f"enter new: {user_request_task_item}", "", value)
         
         # If user cancels edit
@@ -174,8 +170,7 @@ def edit_task():
     # Editing status
     elif user_request_task_item == "Status":
         value = task[user_request_task][user_request_task_item]
-        print(f"entered {user_request_task_item} eddit")
-        print(value)
+
         msg = (f"select new status for {user_request_task}")
         title = ("update status for {user_request_task}")
         choices = ["Completed", "In Progress", "Blocked", "Not Started"]
@@ -201,7 +196,7 @@ def edit_task():
     # Editing assignee
     elif user_request_task_item == "Assignee":
         value = task[user_request_task][user_request_task_item]
-        print(f"entered {user_request_task_item} eddit")
+
         
         staff = [""]
         staff_code = [""]
@@ -223,7 +218,7 @@ def edit_task():
     # Editing priority
     elif user_request_task_item == "Priority":
         value = task[user_request_task][user_request_task_item]
-        print(f"entered {user_request_task_item} eddit")
+
         choices = [1, 2, 3]
         pre_set = choices.index(value)
         msg = ("enter new prioity")
@@ -231,9 +226,6 @@ def edit_task():
         new_value = easygui.choicebox(msg, title, choices, pre_set)  # Select new priority
         task[user_request_task][user_request_task_item] = new_value
         return menu()
-    
-    else:
-        print(f"you missed{user_request_task_item}")  # Fallback case
 
 
 def view_user_tasks():
@@ -260,7 +252,7 @@ def view_user_tasks():
 
 
 def new_task():
-    print("susceful entered new task.")
+
     TITLE = "create new task"
     staff_members = ['None']
     Status = ["Not Started", "In Progress", "Blocked"]
@@ -269,18 +261,38 @@ def new_task():
     # Populate staff choices
     for key, details in team.items():
         staff_members.append(key)
-        print(key)
+
     
-    print(staff_members)
+
     
     task_id = f"T{str(len(task)+1)}"  # Generate new unique incremted task ID
 
     # Gather task details from user
-    n_task_name = easygui.enterbox("enter new task name", TITLE)
-    n_task_description = easygui.enterbox("enter new task description", TITLE)
-    n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE, staff_members)
-    n_task_priority = easygui.integerbox("enter new task's priority\nBetwen 1 and 3", TITLE, None, 1, 3)
+    while True:
+        n_task_name = easygui.enterbox("enter new task name", TITLE)
+        if n_task_name == None:
+            return menu()
+        elif n_task_name != "":
+            break
+        easygui.msgbox("you cant have a blank title")
+    while True:
+        n_task_description = easygui.enterbox("enter new task description", TITLE)
+        if n_task_description == None:
+            return menu()
+        elif n_task_description != "":
+            break
+        easygui.msgbox("you cant have a blank desecrtption")
+    n_task_Assignee = easygui.choicebox("enter new task Assignee", TITLE,\
+     staff_members)
+    if n_task_Assignee == None:
+        return menu()
+    n_task_priority = easygui.integerbox("enter new task's priority\nBetwen\
+         1 and 3", TITLE, None, 1, 3)
+    if n_task_priority == None:
+        return menu()
     n_task_status = easygui.choicebox("enter new task status ", TITLE, Status)
+    if n_task_status == None:
+        return menu()
 
     # If task is assigned and not complete, add to team member's task list
     if n_task_Assignee != "None" or n_task_status != "completed":
@@ -307,7 +319,7 @@ def pick_and_view():
     the task list"""
     pretty_format = ""
     user_request_task = user_pick_task()
-    print(user_request_task)
+
     for key, des in task.items():
         if key == user_request_task:
             for k , info in des.items():
@@ -316,6 +328,7 @@ def pick_and_view():
     return menu()
 
 def view_all():
+    """ this function allows the user to see all tasks in system"""
     pretty_format = ""
     #int text
     for key, des in task.items():
@@ -330,7 +343,7 @@ def view_all():
 def view_task(num):
     """this function allows the system to pick and view a task from
     the task list"""
-    print("you entred system task view task")
+
     
     gui_output = ""
     for names , data in task[num].items():
