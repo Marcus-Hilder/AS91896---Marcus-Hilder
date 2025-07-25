@@ -1,6 +1,7 @@
 import easygui
 
 task = {
+    #Dict for all tasks
     "T1" : {
         "title" : "Design Homepage",
         "description" : "Create a mockup of the homepage",
@@ -39,6 +40,8 @@ task = {
 }
 
 team = {
+    #Dict for all staff members
+
     "JSM" : {
         "name"  : "john smith",
         "Email" : "John@techvision.com",
@@ -117,7 +120,8 @@ def user_pick_task_item(index):
                 Choice_list.append(k)
     
     #present all aviable optins to user then return their choice
-    choice = easygui.choicebox("pick a task" ,"task picker" , Choice_list)
+    choice = easygui.choicebox("Pick a task item" ,"Task item picker" ,\
+         Choice_list)
     return choice
 
 def user_pick_user():
@@ -135,13 +139,15 @@ def edit_task():
     """
     Allows user to edit a task.
     """
-    user = ""  # Placeholder to track the user assigned to the task
-    user_request_task = user_pick_task()  # User selects which task to edit
-    user_request_task_item = user_pick_task_item(user_request_task)  # User selects which attribute to edit
+    user = ""  
+    # Placeholder to track the user assigned to the task
+    user_request_task = user_pick_task()  
+    # User selects which task to edit
+    user_request_task_item = user_pick_task_item(user_request_task)  
+    # User selects which attribute to edit
 
-    # Identify the user currently assigned to the task
     for name, info in team.items():
-
+        # Identify the user currently assigned to the task
         if user_request_task in info["task"]:
             user = name
 
@@ -149,9 +155,10 @@ def edit_task():
     if user_request_task_item == "title" or\
         user_request_task_item == "description":
         value = task[user_request_task][user_request_task_item]
-        new_value = easygui.enterbox(f"enter new: {user_request_task_item}", "", value)
+        new_value = easygui.enterbox(f"enter new: {user_request_task_item}"\
+        , "", value)
         
-        # If user cancels edit
+        # If user dosent change anything edit
         if new_value == None:
             easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
