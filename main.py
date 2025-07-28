@@ -83,7 +83,9 @@ def menu():
             choices.append(items)
         
         selection = easygui.choicebox(msg , title , choices)
-    
+        if selection == None:
+            exit()
+        
         get_input = options[selection]()
 
 def system_search():
@@ -162,16 +164,16 @@ def edit_task():
         if new_value == None:
             easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
-        else:
-            task[user_request_task][user_request_task_item] = new_value
-        
         # If no change was made
-        if value == new_value:
+        elif value == new_value:
             easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
         else:
-            easygui.msgbox(f"the value was updated from:\n {value}\n \
-            to: {new_value} ", "warning you eddited task")
+            #update the task
+            task[user_request_task][user_request_task_item] = new_value
+            #inform the user of what they changed
+            easygui.msgbox(f"The value was updated from:\n {value}\n\
+to: {new_value} ", "Updating task")
             return menu()
     
     # Editing status
@@ -185,7 +187,8 @@ def edit_task():
 
         task[user_request_task][user_request_task_item] = new_value
 
-        # If task is marked completed, remove it from the team member's task list
+        # If task is marked completed, remove it from the team member's
+        # task list
         if new_value == "completed" and user != "":
             assignee = task[user_request_task]["Assignee"]
             if user_request_task in team[assignee]["task"]:
@@ -212,14 +215,15 @@ def edit_task():
         for key, des in team.items():
             staff.append(des["name"])
             staff_code.append(key)
-        
-        pre_set = staff_code.index(value)  # Current assignee position
+         # Current assignee position
+        pre_set = staff_code.index(value) 
         msg = ("Pick New Assignee")
         title = ("New Assignee")
-        new_value = easygui.choicebox(msg, title, staff, pre_set)  # Select new assignee
+        # Select new assignee
+        new_value = easygui.choicebox(msg, title, staff, pre_set)  
         index = staff.index(new_value)
-
-        task[user_request_task][user_request_task_item] = staff_code[index]  # Save new assignee
+        # Save new assignee
+        task[user_request_task][user_request_task_item] = staff_code[index]  
         return menu()
 
     # Editing priority
@@ -230,7 +234,8 @@ def edit_task():
         pre_set = choices.index(value)
         msg = ("enter new prioity")
         title = ("set new priorty")
-        new_value = easygui.choicebox(msg, title, choices, pre_set)  # Select new priority
+        # Select new priority
+        new_value = easygui.choicebox(msg, title, choices, pre_set) 
         task[user_request_task][user_request_task_item] = new_value
         return menu()
 
