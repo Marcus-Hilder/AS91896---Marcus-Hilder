@@ -75,12 +75,12 @@ def menu():
     get_input = "Y"
 
     while get_input == "Y":
-        msg = "what would you like to do"
-        title = "FIX**"
+        msg = "How can we assist you today"
+        title = "Main Menu"
         choices = []
 
         for items in options:
-            choices.append(items)
+            choices.append(items)   
         
         selection = easygui.choicebox(msg , title , choices)
         if selection == None:
@@ -143,21 +143,21 @@ def edit_task():
     """
     user = ""  
     # Placeholder to track the user assigned to the task
-    user_request_task = user_pick_task()  
+    selected_task_id = user_pick_task()  
     # User selects which task to edit
-    user_request_task_item = user_pick_task_item(user_request_task)  
+    selected_field = user_pick_task_item(selected_task_id)  
     # User selects which attribute to edit
 
     for name, info in team.items():
         # Identify the user currently assigned to the task
-        if user_request_task in info["task"]:
+        if selected_task_id in info["task"]:
             user = name
 
     # Editing title or description
-    if user_request_task_item == "title" or\
-        user_request_task_item == "description":
-        value = task[user_request_task][user_request_task_item]
-        new_value = easygui.enterbox(f"enter new: {user_request_task_item}"\
+    if selected_field == "title" or\
+        selected_field == "description":
+        value = task[selected_task_id][selected_field]
+        new_value = easygui.enterbox(f"enter new: {selected_field}"\
         , "", value)
         
         # If user dosent change anything edit
@@ -170,30 +170,31 @@ def edit_task():
             return menu()
         else:
             #update the task
-            task[user_request_task][user_request_task_item] = new_value
+            task[selected_task_id][selected_field] = new_value
             #inform the user of what they changed
             easygui.msgbox(f"The value was updated from:\n {value}\n\
 to: {new_value} ", "Updating task")
             return menu()
     
     # Editing status
-    elif user_request_task_item == "Status":
-        value = task[user_request_task][user_request_task_item]
+    elif selected_field == "Status":
+        value = task[selected_task_id][selected_field]
 
-        msg = (f"select new status for {user_request_task}")
-        title = ("update status for {user_request_task}")
-        choices = ["Completed", "In Progress", "Blocked", "Not Started"]
+        msg = (f"select new status for {selected_task_id}")
+        title = (f"update status for {selected_task_id}")
+        choices = [f"Completed", "In Progress", "Blocked", "Not Started"]
         new_value = easygui.buttonbox(msg, title, choices)
 
-        task[user_request_task][user_request_task_item] = new_value
+        task[selected_task_id][selected_field] = new_value
+        
 
         # If task is marked completed, remove it from the team member's
         # task list
         if new_value == "completed" and user != "":
-            assignee = task[user_request_task]["Assignee"]
-            if user_request_task in team[assignee]["task"]:
-                team[assignee]["task"].remove(user_request_task)
-            task[user_request_task]["Assignee"] = ""
+            assignee = task[selected_task_id]["Assignee"]
+            if selected_task_id in team[assignee]["task"]:
+                team[assignee]["task"].remove(selected_task_id)
+            task[selected_task_id]["Assignee"] = ""
 
         if value == new_value:
             easygui.msgbox("warning nothing changed", "Warning!")
@@ -204,10 +205,9 @@ to: {new_value} ", "Updating task")
             return menu()
 
     # Editing assignee
-    elif user_request_task_item == "Assignee":
-        value = task[user_request_task][user_request_task_item]
+    elif selected_field == "Assignee":
+        previous_assignee = task[selected_task_id][selected_field]
 
-        
         staff = [""]
         staff_code = [""]
 
@@ -215,20 +215,30 @@ to: {new_value} ", "Updating task")
         for key, des in team.items():
             staff.append(des["name"])
             staff_code.append(key)
-         # Current assignee position
-        pre_set = staff_code.index(value) 
+
+        # Current assignee position
+        pre_set = staff_code.index(previous_assignee) 
+
         msg = ("Pick New Assignee")
         title = ("New Assignee")
         # Select new assignee
-        new_value = easygui.choicebox(msg, title, staff, pre_set)  
-        index = staff.index(new_value)
+        new_assignee = easygui.choicebox(msg, title, staff, pre_set)  
+        index = staff.index(new_assignee)
         # Save new assignee
-        task[user_request_task][user_request_task_item] = staff_code[index]  
+        
+        task[selected_task_id][selected_field] = staff_code[index]  
+        
+
+        if previous_assignee != new_assignee:
+            
+            team[previous_assignee]["task"].remove(selected_task_id)
+            team[staff_code[index]]["task"].append(selected_task_id)
+            #print(team[staff_code])
         return menu()
 
     # Editing priority
-    elif user_request_task_item == "Priority":
-        value = task[user_request_task][user_request_task_item]
+    elif selected_field == "Priority":
+        value = task[ selected_task_id][selected_field]
 
         choices = [1, 2, 3]
         pre_set = choices.index(value)
@@ -236,7 +246,7 @@ to: {new_value} ", "Updating task")
         title = ("set new priorty")
         # Select new priority
         new_value = easygui.choicebox(msg, title, choices, pre_set) 
-        task[user_request_task][user_request_task_item] = new_value
+        task[ selected_task_id][selected_field] = new_value
         return menu()
 
 
