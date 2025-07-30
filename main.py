@@ -102,7 +102,10 @@ def user_pick_task():
     Choice_list = []
     for key , task_info in task.items():
         Choice_list.append(task_info["title"])
-    choice = easygui.choicebox("pick a task" ,"task picker" , Choice_list)
+    choice = easygui.choicebox("Pick a task" ,f"{len(Choice_list)}\
+ tasks to pick from" , Choice_list)
+    if choice == None:
+        return menu()
     for key, task_info in task.items():
         if task_info['title'] == choice:
             return key   
@@ -124,7 +127,10 @@ def user_pick_task_item(index):
     #present all aviable optins to user then return their choice
     choice = easygui.choicebox("Pick a task item" ,"Task item picker" ,\
          Choice_list)
-    return choice
+    if choice == None:
+        return menu()
+    else:
+        return choice
 
 def user_pick_user():
     """ allows the user to pick a task then it will return the task for
@@ -132,11 +138,13 @@ def user_pick_user():
     Choice_list = []
     for key , user in team.items():
         Choice_list.append(user["name"])
-    choice = easygui.choicebox("pick user" ,"user selsction" , Choice_list)
+    choice = easygui.choicebox("Pick user" ,"User selection" , Choice_list)
+    if choice == None:
+        return menu()
     for key, user in team.items():
         if user['name'] == choice:
             return key
-
+    
 def edit_task():
     """
     Allows user to edit a task.
@@ -253,7 +261,6 @@ to: {new_value} ", "Updating task")
         view_task(selected_task_id)
         return menu()
 
-
 def view_user_tasks():
     """ 
     This function allows user to select a staff member and view their tasks.
@@ -270,12 +277,12 @@ def view_user_tasks():
             # Add assigned tasks
             for index, description in task.items():
                 if description["Assignee"] == user:
+                    pretty_format += f"\n{index}\n"
                     for k, des in description.items():
                         pretty_format += f"{k} : {des}\n"
 
     easygui.msgbox(pretty_format, f"{user}'s tasks")  # Show message box
     return menu()
-
 
 def new_task():
 
@@ -338,7 +345,6 @@ def new_task():
     # Show the newly created task
     view_task(task_id)  
     return menu()
-
 
 def pick_and_view():
     """this function allows the uerser to pick and view a task from
