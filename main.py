@@ -174,6 +174,7 @@ def edit_task():
             #inform the user of what they changed
             easygui.msgbox(f"The value was updated from:\n {value}\n\
 to: {new_value} ", "Updating task")
+            view_task(selected_task_id)
             return menu()
     
     # Editing status
@@ -190,18 +191,19 @@ to: {new_value} ", "Updating task")
 
         # If task is marked completed, remove it from the team member's
         # task list
-        if new_value == "completed" and user != "":
+        if new_value == "Completed" and user != "":
             assignee = task[selected_task_id]["Assignee"]
             if selected_task_id in team[assignee]["task"]:
                 team[assignee]["task"].remove(selected_task_id)
             task[selected_task_id]["Assignee"] = ""
 
-        if value == new_value:
+        if value == new_value or value == None:
             easygui.msgbox("warning nothing changed", "Warning!")
             return menu()
         else:
-            easygui.msgbox(f"the value was updated from:\n {value}\n \
-            to: {new_value} ", "warning you eddited task")
+            easygui.msgbox(f"The value was updated from:\n {value}\n \
+            to: {new_value} ", "Warning you eddited task")
+            view_task(selected_task_id)
             return menu()
 
     # Editing assignee
@@ -228,12 +230,13 @@ to: {new_value} ", "Updating task")
         
         task[selected_task_id][selected_field] = staff_code[index]  
         
+        #up date team dic with user new task and reomove task from 
+        #prevous user
 
         if previous_assignee != new_assignee:
-            
             team[previous_assignee]["task"].remove(selected_task_id)
             team[staff_code[index]]["task"].append(selected_task_id)
-            #print(team[staff_code])
+        view_task(selected_task_id)
         return menu()
 
     # Editing priority
@@ -247,6 +250,7 @@ to: {new_value} ", "Updating task")
         # Select new priority
         new_value = easygui.choicebox(msg, title, choices, pre_set) 
         task[ selected_task_id][selected_field] = new_value
+        view_task(selected_task_id)
         return menu()
 
 
@@ -331,8 +335,8 @@ def new_task():
         "Status": n_task_status
     }
     task[task_id] = n_task
-
-    view_task(task_id)  # Show the newly created task
+    # Show the newly created task
+    view_task(task_id)  
     return menu()
 
 
@@ -351,8 +355,10 @@ def pick_and_view():
 
 def view_all():
     """ this function allows the user to see all tasks in system"""
-    pretty_format = ""
     #int text
+    pretty_format = ""
+    #run through all task and display in a clear format then prnted by
+    #easy gui
     for key, des in task.items():
 
         pretty_format += f"\n{key}\n"
@@ -419,9 +425,16 @@ def report():
     pretty_format += f"In Progress : {in_progress}\n\n"
     pretty_format += f"Blocked : {blocked}\n\n"
     pretty_format += f"Not Started : {not_started}"
-    
+    task_count = len(task)
+    percent_complete = completed / task_count
+    blocks_total = 10
+    blocks_filled = int(round(percent_complete * blocks_total))
+
+    # Build progress bar string
+    progress_bar = "▣" * blocks_filled + "▢" * (blocks_total - blocks_filled)
     # Show the summary to the user using easygui message box
-    easygui.msgbox(pretty_format, "Your current report", "okie")
+    easygui.msgbox(f"{pretty_format}\n\n {progress_bar} : \
+{round(percent_complete*100)}%", "Your current report","KO")
     
     # Return to the menu function after showing the report
     return menu()
