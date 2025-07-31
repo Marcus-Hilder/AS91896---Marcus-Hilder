@@ -252,11 +252,11 @@ to: {new_value} ", "Updating task")
         value = task[ selected_task_id][selected_field]
 
         choices = [1, 2, 3]
-        pre_set = choices.index(value)
+        pre_set = choices.index(value)+1
         msg = ("enter new prioity")
         title = ("set new priorty")
         # Select new priority
-        new_value = easygui.choicebox(msg, title, choices, pre_set) 
+        new_value = easygui.integerbox(msg, title, pre_set,lowerbound=1,upperbound=3 ) 
         task[ selected_task_id][selected_field] = new_value
         view_task(selected_task_id)
         return menu()
@@ -440,7 +440,7 @@ def report():
     progress_bar = "▣" * blocks_filled + "▢" * (blocks_total - blocks_filled)
     # Show the summary to the user using easygui message box
     easygui.msgbox(f"{pretty_format}\n\n {progress_bar} : \
-{round(percent_complete*100)}%", "Your current report","KO")
+{round(percent_complete*100)}%", "Your current report",)
     
     # Return to the menu function after showing the report
     return menu()
